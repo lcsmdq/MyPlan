@@ -1,7 +1,15 @@
 terminal en D:\MyPlan app>
+python -m app.main
 .\app\.venv\Scripts\Activate.ps1
+
 (.venv) PS D:\MyPlan app> .\app\.venv\Scripts\Activate.ps1 #virtual activado
 uvicorn app.main:app --reload
 
 models.py - > declarar estructura de bd para aceder desde el endpoint
-routers/"endpoint.py" post get
+routers/"endpoint.py" post 
+
+http://127.0.0.1:8000/
+http://127.0.0.1:8000/events/
+
+Todos los endpoint
+http://127.0.0.1:8000/docs
