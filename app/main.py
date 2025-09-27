@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from .database import Base, engine
-from .routers import events  # 👈 Importa el router
+from app.database import Base
+from app.routers import events  # 👈 Importa el router
 
 #Base.metadata.create_all(bind=engine)
 
