@@ -99,3 +99,18 @@ CREATE TABLE notifications (
     status TEXT CHECK (status IN ('unread', 'read')) DEFAULT 'unread',
     created_at TIMESTAMP DEFAULT NOW()
 );
+
+
+-- Crear usuario con contraseña segura
+CREATE USER user_app WITH PASSWORD 'user_app#';
+
+-- Permitir conexión al schema público
+GRANT CONNECT ON DATABASE myplan_db TO user_app;
+GRANT USAGE ON SCHEMA public TO user_app;
+
+-- Dar permisos de CRUD solo sobre las tablas del schema público
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO user_app;
+
+-- Asegurar que las futuras tablas hereden los mismos permisos
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO user_app;

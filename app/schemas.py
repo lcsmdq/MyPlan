@@ -30,4 +30,4 @@ class EventCreate(EventBase):
 # Esquema de respuesta (incluye ID)
 class Event(EventBase):
     id: UUID
-    created_at: datetime
+    created_at: Optional[datetime] = None
