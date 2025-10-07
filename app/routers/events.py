@@ -9,7 +9,7 @@ from app.models import EventWithLocationView
 from app.schemas import EventBase, EventCreate, Event, EventUpdate, EventWithLocation
 
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 from uuid import UUID
 
 router = APIRouter(
@@ -19,7 +19,7 @@ router = APIRouter(
 
 ## EVENTOS ABM ################################################################
 
-#🎉1. Crear un nuevo evento
+#🎉3. Crear un nuevo evento
 @router.post("/", response_model=EventWithLocation, status_code=status.HTTP_201_CREATED)
 def create_event(event_data: EventCreate, db: Session = Depends(get_db)):
     """
@@ -45,7 +45,7 @@ def create_event(event_data: EventCreate, db: Session = Depends(get_db)):
     
     return created_event
 
-#🎉 2. Actualizar un evento
+#🎉 4. Actualizar un evento
 @router.put("/{event_id}", response_model=EventUpdate)
 def update_event(
     event_id: UUID,
@@ -89,7 +89,7 @@ def update_event(
     
     return updated_event
 
-#🎉 3. Eliminar un evento
+#🎉 5. Eliminar un evento
 @router.delete("/{event_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_event(event_id: UUID, db: Session = Depends(get_db)):
     """
@@ -165,3 +165,24 @@ def read_event(event_id: UUID, db: Session = Depends(get_db)):
         )
     
     return event
+
+# 14. Próximos eventos
+@router.get("/upcoming/", response_model=List[EventWithLocation])
+def get_upcoming_events(
+    days: int = Query(30, description="Días hacia adelante", ge=1, le=365),
+    limit: int = Query(50, le=500),
+    db: Session = Depends(get_db)
+):
+    """
+    Obtener eventos próximos (del día actual en adelante).
+    """
+    now = datetime.now()
+    future_date = now + timedelta(days=days)
+    
+    events = db.query(EventWithLocationView).filter(
+        EventWithLocationView.start_time >= now,
+        EventWithLocationView.start_time <= future_date,
+       # EventWithLocationView.status == 'active'      ###AGREGAR STATUS A LA VISTA
+    ).order_by(EventWithLocationView.start_time).limit(limit).all()
+    
+    return events
