@@ -1,0 +1,71 @@
+users.py
+def get_users(
+    db: Session, 
+    skip: int = 0, 
+    limit: int = 100,
+    is_event_creator: Optional[bool] = None
+) -> List[User]:
+    """Obtener lista de usuarios con paginación"""
+    query = db.query(User)
+    
+    if is_event_creator is not None:
+        query = query.filter(User.is_event_creator == is_event_creator)
+    
+    return query.offset(skip).limit(limit).all()
+
+auth.py
+@router.get("/users", response_model=List[UserPublicProfile])
+def list_users(
+    skip: int = 0,
+    limit: int = 100,
+    is_event_creator: Optional[bool] = None,
+    db: Session = Depends(get_db)
+):
+    """
+    Listar usuarios (perfiles públicos).
+    
+    Filtros opcionales:
+    - is_event_creator: filtrar por creadores de eventos
+    """
+    users = crud_users.get_users(db, skip=skip, limit=limit, is_event_creator=is_event_creator)
+    return users
+
+def get_current_user(
+     authorization: Optional[str] = Header(None, alias="Authorization"),
+    db: Session = Depends(get_db)
+) -> User:
+    """Dependency para obtener el usuario autenticado desde el token JWT."""
+    # 🔍 DEBUG - Temporal
+    print(f"=== DEBUG AUTH ===")
+    print(f"Authorization recibido: {authorization}")
+    print(f"Tipo: {type(authorization)}")
+    if not authorization:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token de autenticación requerido",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    try:
+        scheme, token = authorization.split()
+        if scheme.lower() != "bearer":
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Esquema de autenticación inválido"
+            )
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Header de autenticación malformado"
+        )
+    
+    user_id = verify_token(token)
+    user = crud_users.get_user(db, user_id)
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Usuario no encontrado"
+        )
+    
+    return user

@@ -3,7 +3,8 @@ python -m app.main
 .\app\.venv\Scripts\Activate.ps1
 
 (.venv) PS D:\MyPlan app> .\app\.venv\Scripts\Activate.ps1 #virtual activado
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload #Lanza servidor
+ctrl+c server stop #Cierra servidor
 
 models.py - > declarar estructura de bd para aceder desde el endpoint
 routers/"endpoint.py" post 
