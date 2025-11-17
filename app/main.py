@@ -1,9 +1,10 @@
 from fastapi import FastAPI
-from app.routers import favorites
-from app.database import Base
-from app.routers import events,  assists, auth  # 👈Importa los router
 from fastapi import FastAPI
 from fastapi.security import HTTPBearer
+from app.routers import favorites
+from app.database import Base
+from app.routers import events,  assists, auth  # 👈Importa los routerpip freeze 
+
 
 #Base.metadata.create_all(bind=engine)
 
