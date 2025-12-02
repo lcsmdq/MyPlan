@@ -8,7 +8,7 @@ from app.models import Favorite
 from app.schemas import FavoriteCreate
 
 
-def get_favorite(db: Session, favorite_id: UUID, include_deleted: bool = False) -> Optional[Favorite]:
+def get_favorite(db: Session, favorite_id: int, include_deleted: bool = False) -> Optional[Favorite]:
     """Obtener un favorito por ID"""
     query = db.query(Favorite).filter(Favorite.id == favorite_id)
     
@@ -37,7 +37,7 @@ def get_user_favorites(db: Session, user_id: UUID, include_deleted: bool = False
     return query.order_by(Favorite.created_at.desc()).all()
 
 
-def get_user_favorite_ids(db: Session, user_id: UUID) -> List[UUID]:
+def get_user_favorite_ids(db: Session, user_id: UUID) -> List[int]:
     """Obtener solo los IDs de categorías favoritas activas de un usuario"""
     favorites = db.query(Favorite.category_id).filter(
         Favorite.user_id == user_id,
@@ -101,7 +101,7 @@ def delete_favorite(db: Session, user_id: UUID, category_id: int) -> bool:
     return True
 
 
-def delete_favorite_by_id(db: Session, user_id: UUID, favorite_id: UUID) -> bool:
+def delete_favorite_by_id(db: Session, user_id: UUID, favorite_id: int) -> bool:
     """
     Soft delete por ID.
     Solo permite eliminar favoritos del propio usuario.

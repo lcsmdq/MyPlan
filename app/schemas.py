@@ -254,7 +254,7 @@ class FavoriteCreate(BaseModel):
 
 class FavoriteResponse(BaseModel):
     """Respuesta con información del favorito"""
-    id: UUID
+    id: int
     user_id: UUID
     category_id: int
     created_at: datetime
@@ -266,7 +266,7 @@ class FavoriteResponse(BaseModel):
 
 class FavoriteWithCategory(BaseModel):
     """Respuesta con información de la categoría (opcional)"""
-    id: UUID
+    id: int
     user_id: UUID
     category_id: int
     created_at: datetime

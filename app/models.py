@@ -105,9 +105,9 @@ class User(Base):
         return f"<User {self.username} ({self.email})>"
     
 class Favorite(Base):
-    __tablename__ = "favorites"
+    __tablename__ = "favorite"
     
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(Integer, primary_key=True, index=True)
     user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)  # ✅ Sin CASCADE
     category_id = Column(Integer,  nullable=False) # ForeignKey("categories.id"), Asumiendo que hay tabla categories
     created_at = Column(DateTime, default=datetime.now, server_default=func.now(), nullable=False)
